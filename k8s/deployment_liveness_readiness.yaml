@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    name: goserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: goserver
+  template:
+    metadata:
+      name: goserver
+      labels:
+        name: goserver
+    spec:
+      containers:
+        - name: goserver
+          image: devguerreiro/hello-go:v5.2
+          readinessProbe:
+            httpGet:
+              path: /health-check
+              port: 80
+            periodSeconds: 5 # interval
+            failureThreshold: 1 # retries
+            timeoutSeconds: 1 # wait time
+            successThreshold: 1 # confirmation retries
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health-check
+              port: 80
+            periodSeconds: 5 # interval
+            failureThreshold: 1 # retries
+            timeoutSeconds: 1 # wait time
+            successThreshold: 1 # confirmation retries
+            initialDelaySeconds: 15
+          envFrom:
+            - secretRef:
+                name: goserver-secret
+          volumeMounts:
+            - mountPath: "/go/myfamily"
+              name: config
+
+      volumes:
+        - name: config
+          configMap:
+            name: configmap-family
+            items:
+              - key: members
+                path: "family.txt"
