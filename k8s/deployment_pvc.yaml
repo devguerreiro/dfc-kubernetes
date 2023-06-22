@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    name: goserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: goserver
+  template:
+    metadata:
+      name: goserver
+      labels:
+        name: goserver
+    spec:
+      containers:
+      - name: goserver
+        image: devguerreiro/hello-go
+        volumeMounts:
+          - mountPath: /go/pvc
+            name: goserver-volume
+      volumes:
+        - name: goserver-volume
+          persistentVolumeClaim:
+            claimName: goserver-pvc
