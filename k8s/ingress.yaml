@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-localhost
+  labels:
+    name: demo-localhost
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: devguerreiro.localdev.me
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/devg"
+            backend:
+              service:
+                name: goserver-service
+                port:
+                  number: 80
